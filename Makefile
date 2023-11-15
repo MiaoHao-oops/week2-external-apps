@@ -11,8 +11,8 @@ img: apps imgdump vdisk
 	$(IMGDUMP)/imgdump $(APPS)
 	cat $(APPS)/tmp_head $(APPS)/hello_app.bin > $(APPS)/hello_app.img
 	dd if=$(APPS)/hello_app.img of=./apps.bin conv=notrunc
-	mkdir -p ../../arceos/payload
-	mv ./apps.bin ../../arceos/payload/apps.bin
+	mkdir -p ../arceos/payload
+	mv ./apps.bin ../arceos/payload/apps.bin
 
 apps:
 	cd $(APPS) && make && cd -
