@@ -1,8 +1,18 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 char buff[100];
+char rbuff[1024];
+
+struct ImgHead {
+    uint64_t app_num;
+};
+
+struct AppHead {
+    uint64_t app_size;
+};
 
 void get_tmp_name(char *filename)
 {
@@ -23,9 +33,13 @@ void get_file_name(char *filename)
 int main(int argc, char *argv[]) {
     if (--argc == 0) return 0;
 
+    struct ImgHead img_head = {
+        .app_num = argc,
+    };
+    struct AppHead *app_heads = (struct AppHead *)malloc(sizeof(struct AppHead) * argc);
+
     for (int i = 1; i <= argc; i++) {
         get_file_name(argv[i]);
-        printf("%s\n", buff);
         FILE *file = fopen(buff, "rb+");
         if (file == NULL) {
             perror("Error opening file");
@@ -35,15 +49,40 @@ int main(int argc, char *argv[]) {
         fseek(file, 0, SEEK_END);
         long file_size = ftell(file);
         fclose(file);
-        printf("size of %s is %ld\n", buff, file_size);
 
-        uint64_t size_to_write = (uint64_t)file_size;
-        get_tmp_name(argv[i]);
-        char *tmpname = buff;
-        file = fopen(tmpname, "wb");
-        fwrite(&size_to_write, sizeof(uint64_t), 1, file);
+        app_heads[i - 1].app_size = file_size;
+        printf("size of %s is %ld\n", buff, file_size);
     }
 
+    FILE *tmp_file = fopen("./tmp_file", "wb");
+    if (tmp_file == NULL) {
+        perror("Error opening file");
+        return 1;
+    }
+    fwrite(&img_head, sizeof(struct ImgHead), 1, tmp_file);
+    fwrite(app_heads, sizeof(struct AppHead), 2, tmp_file);
+
+    for (int i = 1; i <= argc; i++) {
+        get_file_name(argv[i]);
+        FILE *file = fopen(buff, "rb+");
+        if (file == NULL) {
+            perror("Error opening file");
+            return 1;
+        }
+
+        unsigned long readn;
+        do {
+            readn = fread(rbuff, sizeof(char), 1024, file);
+            printf("write %lu bytes of %s\n", readn, buff);
+            fwrite(rbuff, sizeof(char), readn, tmp_file);
+        } while (readn == 1024);
+        fclose(file);
+        printf("write %s to temp image file\n", buff);
+    }
+
+    fclose(tmp_file);
+
+    free(app_heads);
     printf("Header added successfully!\n");
 
     return 0;

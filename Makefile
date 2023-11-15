@@ -1,21 +1,26 @@
 TOOLS = ./tools
 IMGDUMP = $(TOOLS)/imgdump
-APPS ?= ./hello_app
 VDISK = ./apps.bin
 
-.PHONY: all clean
+HELLO_APP ?= ./hello_app
+EBREAK ?= ./ebreak
+APPS = $(HELLO_APP) $(EBREAK)
+
+.PHONY: all clean hello_app ebreak imgdump vdisk
 
 all: imgdump
 
-img: apps imgdump vdisk
+img: clean hello_app ebreak imgdump vdisk
 	$(IMGDUMP)/imgdump $(APPS)
-	cat $(APPS)/tmp_head $(APPS)/hello_app.bin > $(APPS)/hello_app.img
-	dd if=$(APPS)/hello_app.img of=./apps.bin conv=notrunc
+	dd if=./tmp_file of=./apps.bin conv=notrunc
 	mkdir -p ../arceos/payload
 	mv ./apps.bin ../arceos/payload/apps.bin
 
-apps:
-	cd $(APPS) && make && cd -
+hello_app:
+	cd $(HELLO_APP) && make && cd -
+
+ebreak:
+	cd $(EBREAK) && make && cd -
 
 imgdump:
 	cd $(IMGDUMP) && make && cd -
@@ -25,8 +30,10 @@ vdisk:
 
 
 clean:
-	cd $(APPS) && make clean && cd -
+	cd $(HELLO_APP) && make clean && cd -
+	cd $(EBREAK) && make clean && cd -
 	cd $(IMGDUMP) && make clean && cd -
+	rm -rf apps.bin tmp_file
 
 
 
