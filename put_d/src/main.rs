@@ -24,7 +24,7 @@ fn putchar(c: u8) {
 #[link_section = ".text.entry"]
 unsafe extern "C" fn _start(abi_entry: usize) {
     ABI_ENTRY = abi_entry;
-    putchar(b'C');
+    putchar(b'D');
 }
 
 use core::panic::PanicInfo;
