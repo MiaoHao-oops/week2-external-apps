@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     fwrite(&img_head, sizeof(struct ImgHead), 1, tmp_file);
-    fwrite(app_heads, sizeof(struct AppHead), 2, tmp_file);
+    fwrite(app_heads, sizeof(struct AppHead), argc, tmp_file);
 
     for (int i = 1; i <= argc; i++) {
         get_file_name(argv[i]);
