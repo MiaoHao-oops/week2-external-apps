@@ -39,8 +39,8 @@ int main(int argc, char *argv[]) {
     struct AppHead *app_heads = (struct AppHead *)malloc(sizeof(struct AppHead) * argc);
 
     for (int i = 1; i <= argc; i++) {
-        get_file_name(argv[i]);
-        FILE *file = fopen(buff, "rb+");
+        // get_file_name(argv[i]);
+        FILE *file = fopen(argv[i], "rb+");
         if (file == NULL) {
             perror("Error opening file");
             return 1;
@@ -63,8 +63,8 @@ int main(int argc, char *argv[]) {
     fwrite(app_heads, sizeof(struct AppHead), argc, tmp_file);
 
     for (int i = 1; i <= argc; i++) {
-        get_file_name(argv[i]);
-        FILE *file = fopen(buff, "rb+");
+        // get_file_name(argv[i]);
+        FILE *file = fopen(argv[i], "rb+");
         if (file == NULL) {
             perror("Error opening file");
             return 1;
