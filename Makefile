@@ -16,7 +16,7 @@ APPS = c_hello c_hello_d c_memtest c_pthread_base c_pthread_parallel
 all: imgdump
 
 img: clean $(APPS) imgdump vdisk
-	$(IMGDUMP)/imgdump $(C_HELLO)/c_hello.elf $(C_HELLO_D)/c_hello_d.elf $(C_MEMTEST)/c_memtest.elf $(C_PTHREAD_BASE)/c_pthread_base.elf $(C_PTHREAD_PARALLEL)/c_pthread_parallel.elf
+	$(IMGDUMP)/imgdump $(C_PTHREAD_BASE)/c_pthread_base.elf $(C_PTHREAD_PARALLEL)/c_pthread_parallel.elf $(C_HELLO)/c_hello.elf $(C_HELLO_D)/c_hello_d.elf $(C_MEMTEST)/c_memtest.elf
 	dd if=./tmp_file of=./apps.bin conv=notrunc
 	mkdir -p ../arceos/payload
 	mv ./apps.bin ../arceos/payload/apps.bin
